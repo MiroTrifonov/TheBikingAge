@@ -2,7 +2,7 @@
  * 
  */
 package bikescheme;
-// nqma komentar
+// nqma komentar 123
 import java.util.logging.Logger;
 
 /**
