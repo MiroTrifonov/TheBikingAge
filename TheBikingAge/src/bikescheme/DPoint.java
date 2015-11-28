@@ -3,6 +3,8 @@
  */
 package bikescheme;
 
+import java.util.List;
+import java.util.Queue;
 import java.util.logging.Logger;
 
 /**
@@ -12,13 +14,15 @@ import java.util.logging.Logger;
  * @author pbj
  *
  */
-public class DPoint implements KeyInsertionObserver {
+public class DPoint implements KeyInsertionObserver,BikeDockingObserver {
     public static final Logger logger = Logger.getLogger("bikescheme");
 
     private KeyReader keyReader; 
     private OKLight okLight;
     private String instanceName;
-    private int index;
+    private int index; 
+    private BikeSensor sensor;
+    private Bike bike; // or just one bike here ? TODO
  
     /**
      * 
@@ -38,6 +42,9 @@ public class DPoint implements KeyInsertionObserver {
         okLight = new OKLight(instanceName + ".ok");
         this.instanceName = instanceName;
         this.index = index;
+        sensor = new BikeSensor("sensor" + ".bs");
+        sensor.setObserver(this);
+        
     }
        
     public void setDistributor(EventDistributor d) {
@@ -48,6 +55,10 @@ public class DPoint implements KeyInsertionObserver {
         okLight.setCollector(c);
         
     }
+    private DpToDsBikeObserver observer;
+    public void addObserver(DpToDsBikeObserver o){
+    	observer = o;
+    }
     
     public String getInstanceName() {
         return instanceName;
@@ -57,16 +68,39 @@ public class DPoint implements KeyInsertionObserver {
     }
     
     /** 
-     * Dummy implementation of docking point functionality on key insertion.
+     * In this method only the main success scenario for give bike is considered. This mean no check if user had already taken bike is implemented - this is to be done at later stage of code implementation 
+     * Also the case where Dpoint is empty is not considered
      * 
-     * Here, just flash the OK light.
      */
     public void keyInserted(String keyId) {
+    	
+    	
         logger.fine(getInstanceName());
-        
+        giveBike(keyId);
         okLight.flash();       
     }
-    
- 
+    // if Dp is empty error will be geberated here. However this is not part of MSS
+	public void giveBike(String keyID){ 
+    	//TODO generate even unlock bike,
+		Bike unlockedBike = Bikes.poll();
+	
+		String bikeID = unlockedBike.getBikeID();
+		
+		observer.userHasTakenBike(keyID, bikeID);
+		
+    }
+    public void bikeDocked(String bikeID){
+    	observer.userHasReturnedBike(bikeID);
+    	Bike retBike = new Bike(bikeID);
+    	Bikes.add(retBike);
+    	// generate output lock bike
+    }
+    public void addBike(String bikeID){
+    	Bike retBike = new Bike(bikeID);
+    	Bikes.add(retBike);
+    	// generate output lock bike
+    }
+
+
 
 }

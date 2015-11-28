@@ -15,6 +15,7 @@ import java.util.List;
  */
 public class KeyIssuer extends AbstractOutputDevice {
     int keyNum;
+    List<String> valueList = new ArrayList<String>();
     
     public KeyIssuer(String instanceName) {
         super(instanceName);
@@ -30,7 +31,7 @@ public class KeyIssuer extends AbstractOutputDevice {
         String newKeyId = getInstanceName() + "-" + keyNum;
         keyNum++;
         
-        List<String> valueList = new ArrayList<String>();
+       // List<String> valueList = new ArrayList<String>(); - this is array with all keys. Moved to top
         valueList.add(newKeyId); 
         
         

@@ -93,6 +93,13 @@ public class KeyReader extends AbstractInputDevice {
                         messageName);
         return messageArgs.get(0);
     }
+    public void promptForKey(){
+    	//TODO generate event for key requirement.
+    }
+    public String readKey(){
+    	this.promptForKey();
+    	return this.waitForKeyInsertion();
+    }
   
 
 

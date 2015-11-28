@@ -13,4 +13,5 @@ package bikescheme;
  */
 public interface BikeDockingObserver {
     public void bikeDocked(String bikeId);
+    public void addBike(String bikeId);
 }

@@ -3,6 +3,7 @@
  */
 package bikescheme;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -17,12 +18,13 @@ import java.util.logging.Logger;
  * @author pbj
  *
  */
-public class Hub implements AddDStationObserver {
+public class Hub implements AddDStationObserver,AddUserObserver {
     public static final Logger logger = Logger.getLogger("bikescheme");
 
     private HubTerminal terminal;
     private HubDisplay display;
     private Map<String,DStation> dockingStationMap;
+    private List<User> users;
     
     /**
      * 
@@ -41,6 +43,7 @@ public class Hub implements AddDStationObserver {
         terminal.setObserver(this);
         display = new HubDisplay("hd");
         dockingStationMap = new HashMap<String,DStation>();
+        users = new ArrayList<User>();
         
         // Schedule timed notification for generating updates of 
         // hub display. 
@@ -111,11 +114,54 @@ public class Hub implements AddDStationObserver {
         
         newDStation.setDistributor(d);
         newDStation.setCollector(c);
+        newDStation.addObserver(this);
+    }
+    public void addUser(User user){
+    	users.add(user);
     }
     
     public DStation getDStation(String instanceName) {
         return dockingStationMap.get(instanceName);
     }
- 
+    public void newUserCreated(User user){
+    	users.add(user);
+    	//TODO check if user is indeed added
+    }
+    // method for getting user when he has inserted key
+    /* since test may want to get bike with key without registering key, a dummy user object is created for this key if user is not found in regitered users list 
+     * in later implementation this will generate an exception instead*/
+    public User getUserByKey(String keyID){
+    for(User user:users){
+    	if(user.getKeyID().equals(keyID)){
+    		return user;
+    	}
+   
+    } 
+    User dummy = new User("Dummy","dummy cardInfo",keyID);
+    return dummy;
+    }
+    // same comment as above method
+    public User getUserByBike(String bikeID){
+        for(User user:users){
+        	if(user.getKeyID().equals(bikeID)){
+        		return user;
+        	}
+       
+        } 
+        User dummy = new User("Dummy","dummy cardInfo", "dummyKey");
+        return dummy;
+        }
+    public void bikeTaken(String keyID, String bikeID){
+    	User user = getUserByKey(keyID);
+    	user.takeBike(bikeID);
+    }
+    public void bikeReturned (String bikeID){
+    	User user = getUserByBike(bikeID);
+    	user.returnBike();
+    }
+    public String getActivity(String keyID){
+    	User user = getUserByKey(keyID);
+    	return user.getActivity();
+    }
 
 }

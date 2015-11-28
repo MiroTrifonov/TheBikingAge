@@ -14,7 +14,7 @@ import java.util.logging.Logger;
  * @author pbj
  *
  */
-public class DStation implements StartRegObserver {
+public class DStation implements StartRegObserver, DpToDsBikeObserver,ViewActivityObserver{
     public static final Logger logger = Logger.getLogger("bikescheme");
 
     private String instanceName;
@@ -25,6 +25,7 @@ public class DStation implements StartRegObserver {
     private CardReader cardReader; 
     private KeyIssuer keyIssuer;
     private List<DPoint> dockingPoints;
+    private KeyReader keyReader;
  
     /**
      * 
@@ -56,11 +57,14 @@ public class DStation implements StartRegObserver {
         
         keyIssuer = new KeyIssuer(instanceName + ".ki");
         
+        keyReader = new KeyReader(instanceName +".kr");
+        
         dockingPoints = new ArrayList<DPoint>();
         
         for (int i = 1; i <= numPoints; i++) {
             DPoint dp = new DPoint(instanceName + "." + i, i - 1);
             dockingPoints.add(dp);
+            dp.addObserver(this);
         }
     }
        
@@ -80,7 +84,11 @@ public class DStation implements StartRegObserver {
             dp.setCollector(c);
         }
     }
+    private AddUserObserver userUpdate;
     
+    public void addObserver(AddUserObserver o){
+    	userUpdate=o;
+    }
     /** 
      * Dummy implementation of docking station functionality for 
      * "register user" use case.
@@ -96,10 +104,12 @@ public class DStation implements StartRegObserver {
         cardReader.requestCard();  // Generate output event
         logger.fine("At position 1 on instance " + getInstanceName());
         
-        cardReader.checkCard();    // Pull in non-triggering input event
+        String cardDetails = cardReader.checkCard();    // Pull in non-triggering input event
         logger.fine("At position 2 on instance " + getInstanceName());
         
-        keyIssuer.issueKey(); // Generate output event
+        String keyID = keyIssuer.issueKey(); // Generate output event
+        User user = new User(personalInfo, cardDetails,keyID);
+        userUpdate.newUserCreated(user);
     }
     
     public String getInstanceName() {
@@ -113,6 +123,17 @@ public class DStation implements StartRegObserver {
     public int getNorthPos() {
         return northPos;
     }
- 
+    public void userHasTakenBike(String keyID, String bikeID){
+    	userUpdate.bikeTaken(keyID, bikeID);
+    }
+    public void userHasReturnedBike(String bikeID){
+    	userUpdate.bikeReturned(bikeID);
+    }
+    public void viewActivityReceived(){
+    	//TODO format activity, send activity to DTS for printing
+    	String keyID = keyReader.readKey();
+    	String activity = userUpdate.getActivity(keyID);
+    	touchScreen.showUserActivity(null); // format activity here
+    }
 
 }

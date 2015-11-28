@@ -68,8 +68,8 @@ public class SystemTest {
      *   
      */
     public void setupDemoSystemConfig() {
-        input("1 07:00, HubTerminal, ht, addDStation, A,   0,   0, 5");
-        input("1 07:00, HubTerminal, ht, addDStation, B, 400, 300, 3");
+        input("1 07:00, HubTerminal, ht, addDStation, A,   0,   0, 5"); //add bikes
+        input("1 07:00, HubTerminal, ht, addDStation, B, 400, 300, 3"); // add bikes
     }
 
     /**
@@ -92,6 +92,10 @@ public class SystemTest {
         input ("2 08:01, CardReader, A.cr, checkCard, Alice-card-auth");
         expect("2 08:01, KeyIssuer, A.ki, keyIssued, A.ki-1");
         
+    }
+    @Test
+    public void hireBike(){
+    	input("2 08:00, DockingPoint, A.bl, hireBike ");
     }
     /**
      *  Run a show high/low occupancy test.
@@ -231,7 +235,7 @@ public class SystemTest {
         
         // Create a hub object with interface devices.
         
-                Hub hub = new Hub();
+         Hub hub = new Hub();
                 
         // Connect up hub interface devices to event framework
                 

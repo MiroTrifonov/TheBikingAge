@@ -60,6 +60,7 @@ public class DSTouchScreen extends AbstractIODevice {
     public void setObserver(StartRegObserver o) {
         startRegObserver = o;
     }
+    private AddUserObserver userObserver;
     
     /**
      * Model user starting a user registration operation and entering their
