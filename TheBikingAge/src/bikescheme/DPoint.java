@@ -82,7 +82,8 @@ public class DPoint implements KeyInsertionObserver,BikeDockingObserver {
     // if Dp is empty error will be geberated here. However this is not part of MSS
 	public void giveBike(String keyID){ 
     	//TODO generate even unlock bike,
-		Bike unlockedBike = Bikes.poll();
+		Bike unlockedBike = bike;
+		this.bike = null;
 	
 		String bikeID = unlockedBike.getBikeID();
 		
@@ -92,12 +93,12 @@ public class DPoint implements KeyInsertionObserver,BikeDockingObserver {
     public void bikeDocked(String bikeID){
     	observer.userHasReturnedBike(bikeID);
     	Bike retBike = new Bike(bikeID);
-    	Bikes.add(retBike);
+    	this.bike = retBike;
     	// generate output lock bike
     }
     public void addBike(String bikeID){
     	Bike retBike = new Bike(bikeID);
-    	Bikes.add(retBike);
+    	this.bike = retBike;
     	// generate output lock bike
     }
 
