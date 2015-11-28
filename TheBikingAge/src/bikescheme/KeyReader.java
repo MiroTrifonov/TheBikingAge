@@ -66,6 +66,10 @@ public class KeyReader extends AbstractInputDevice {
         
         observer.keyInserted(keyId);
     }
+    public  void staffMemRemoveBike(String keyId){
+    	logger.fine(getInstanceName());
+    	observer.staffMemberRemoveBike(keyId);
+    }
 
     /*
      * 

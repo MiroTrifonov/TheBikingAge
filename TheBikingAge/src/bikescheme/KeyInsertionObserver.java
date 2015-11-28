@@ -13,4 +13,5 @@ package bikescheme;
  */
 public interface KeyInsertionObserver {
     public void keyInserted(String keyId);
+    public void staffMemberRemoveBike(String keyId);
 }

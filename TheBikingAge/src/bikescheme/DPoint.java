@@ -76,11 +76,11 @@ public class DPoint implements KeyInsertionObserver,BikeDockingObserver {
     	
     	
         logger.fine(getInstanceName());
-        giveBike(keyId);
+        userTakesBike(keyId);
         okLight.flash();       
     }
-    // if Dp is empty error will be geberated here. However this is not part of MSS
-	public void giveBike(String keyID){ 
+    // if Dp is empty error will be generated here. However this is not part of MSS
+	public void userTakesBike(String keyID){ 
     	//TODO generate even unlock bike,
 		Bike unlockedBike = bike;
 		this.bike = null;
@@ -97,11 +97,14 @@ public class DPoint implements KeyInsertionObserver,BikeDockingObserver {
     	// generate output lock bike
     }
     public void addBike(String bikeID){
-    	Bike retBike = new Bike(bikeID);
-    	this.bike = retBike;
+    	this.bike = new Bike(bikeID);
     	// generate output lock bike
     }
-
+    public void staffMemberRemoveBike(String keyId){
+    	Bike unlockedBike = bike;
+    	this.bike = null;
+    	// generate output unlock bike
+    }
 
 
 }
