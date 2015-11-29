@@ -4,6 +4,7 @@
 package bikescheme;
 
 import java.text.DateFormat;
+import java.util.TimeZone;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -41,6 +42,7 @@ import java.util.List;
 public class Clock extends AbstractInputDevice {
  
     private class TimedNotification {
+    	
         private TimedNotificationObserver observer;
         private long start;
         private long interval;
@@ -67,7 +69,7 @@ public class Clock extends AbstractInputDevice {
         
                 
     }
-        
+
     private static final DateFormat dateFormat;
     private static final Date startDate;
     private static final Date errorDate;
@@ -80,15 +82,15 @@ public class Clock extends AbstractInputDevice {
         dateFormat = new SimpleDateFormat("d HH:mm");
 
         startDate = new Date(0L); // 1 Jan 1970, 00:00
-        
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
         Calendar cal = Calendar.getInstance();
         cal.clear();
         cal.set(1999, 12, 31, 23, 59);
-        errorDate = cal.getTime();   
+        errorDate = cal.getTime();
         
-         
-        instance = new Clock();
-        
+    }
+    public static void createInstance() {
+        instance = new Clock();        
     }
     
     private Clock() {

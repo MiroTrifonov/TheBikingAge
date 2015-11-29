@@ -124,16 +124,18 @@ public class DStation implements StartRegObserver, DpToDsBikeObserver,ViewActivi
         return northPos;
     }
     public void userHasTakenBike(String keyID, String bikeID){
-    	userUpdate.bikeTaken(keyID, bikeID);
+    	String dStation = this.instanceName;
+    	userUpdate.bikeTaken(keyID, bikeID, dStation);
     }
     public void userHasReturnedBike(String bikeID){
-    	userUpdate.bikeReturned(bikeID);
+    	String dStation = this.instanceName;
+    	userUpdate.bikeReturned(bikeID, dStation);
     }
     public void viewActivityReceived(){
     	//TODO format activity, send activity to DTS for printing
     	String keyID = keyReader.readKey();
-    	String activity = userUpdate.getActivity(keyID);
-    	touchScreen.showUserActivity(null); // format activity here
+    	List activity = userUpdate.getActivity(keyID);
+    	touchScreen.showUserActivity(activity); // format activity here
     }
 
 }

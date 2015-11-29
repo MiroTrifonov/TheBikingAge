@@ -22,7 +22,8 @@ public class DPoint implements KeyInsertionObserver,BikeDockingObserver {
     private String instanceName;
     private int index; 
     private BikeSensor sensor;
-    private Bike bike; // or just one bike here ? TODO
+    private boolean bikeAvailable = false;
+    private Bike bike = null; // or just one bike here ? TODO
  
     /**
      * 
@@ -49,6 +50,7 @@ public class DPoint implements KeyInsertionObserver,BikeDockingObserver {
        
     public void setDistributor(EventDistributor d) {
         keyReader.addDistributorLinks(d); 
+        sensor.addDistributorLinks(d);
     }
     
     public void setCollector(EventCollector c) {
@@ -77,34 +79,47 @@ public class DPoint implements KeyInsertionObserver,BikeDockingObserver {
     	
         logger.fine(getInstanceName());
         userTakesBike(keyId);
-        okLight.flash();       
+        okLight.flash(); 
     }
     // if Dp is empty error will be generated here. However this is not part of MSS
-	public void userTakesBike(String keyID){ 
-    	//TODO generate even unlock bike,
-		Bike unlockedBike = bike;
-		this.bike = null;
-	
-		String bikeID = unlockedBike.getBikeID();
-		
-		observer.userHasTakenBike(keyID, bikeID);
+	public void userTakesBike(String keyID){
+		if (bikeAvailable==true){
+			//TODO generate even unlock bike,
+			Bike unlockedBike = bike;
+			this.bike = null;
+			String bikeID = unlockedBike.getBikeID();
+			observer.userHasTakenBike(keyID, bikeID);
+			bikeAvailable = false;
+		}
+		else{
+			//generate error message
+		}
 		
     }
     public void bikeDocked(String bikeID){
     	observer.userHasReturnedBike(bikeID);
     	Bike retBike = new Bike(bikeID);
     	this.bike = retBike;
+    	this.bikeAvailable = true;
     	// generate output lock bike
     }
     public void addBike(String bikeID){
     	this.bike = new Bike(bikeID);
+    	this.bikeAvailable = true;
     	// generate output lock bike
     }
     public void staffMemberRemoveBike(String keyId){
-    	Bike unlockedBike = bike;
-    	this.bike = null;
-    	// generate output unlock bike
+    	if(bikeAvailable = true){
+    		Bike unlockedBike = bike;
+    		this.bike = null;
+    		// generate output unlock bike
+    		bikeAvailable = false;
+    	}
+    	else{
+    		// generate error message
+    	}
     }
+    	
 
 
 }

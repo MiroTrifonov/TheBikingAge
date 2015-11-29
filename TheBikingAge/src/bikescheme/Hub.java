@@ -3,6 +3,7 @@
  */
 package bikescheme;
 
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -44,6 +45,7 @@ public class Hub implements AddDStationObserver,AddUserObserver {
         display = new HubDisplay("hd");
         dockingStationMap = new HashMap<String,DStation>();
         users = new ArrayList<User>();
+        Clock.createInstance();
         
         // Schedule timed notification for generating updates of 
         // hub display. 
@@ -58,7 +60,7 @@ public class Hub implements AddDStationObserver,AddUserObserver {
                      * Generate dummy display of station occupancy data.
                      */
                     @Override
-                    public void processTimedNotification() {
+                    public void processTimedNotification() { //State Occupancy create
                         logger.fine("");
 
                         String[] occupancyArray = 
@@ -74,7 +76,7 @@ public class Hub implements AddDStationObserver,AddUserObserver {
                 Clock.getStartDate(), 
                 0, 
                 5);
-
+     
     }
 
     public void setDistributor(EventDistributor d) {
@@ -151,15 +153,15 @@ public class Hub implements AddDStationObserver,AddUserObserver {
         User dummy = new User("Dummy","dummy cardInfo", "dummyKey");
         return dummy;
         }
-    public void bikeTaken(String keyID, String bikeID){
-    	User user = getUserByKey(keyID);
-    	user.takeBike(bikeID);
+    public void bikeTaken(String keyID, String bikeID, String dStation){
+    	Date date = Clock.getStartDate();
+    	getUserByKey(keyID).takeBike(bikeID, date, dStation);;
     }
-    public void bikeReturned (String bikeID){
-    	User user = getUserByBike(bikeID);
-    	user.returnBike();
+    public void bikeReturned (String bikeID, String dStation){
+    	Date date = Clock.getStartDate();
+    	getUserByBike(bikeID).returnBike(date, dStation);
     }
-    public String getActivity(String keyID){
+    public List<String> getActivity(String keyID){
     	User user = getUserByKey(keyID);
     	return user.getActivity();
     }
